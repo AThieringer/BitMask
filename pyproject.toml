@@ -5,9 +5,7 @@ build-backend = "hatchling.build"
 [project]
 name = "BitMask"
 version = "1.1.0"
-dependencies = [
-    "warnings"
-]
+dependencies = []
 requires-python = ">= 3.8"
 authors = [
     {name = "Adam Thieringer", email = "adamt0408@gmail.com"}
