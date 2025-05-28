@@ -36,6 +36,6 @@ jobs:
       - name: Build package
         run: hatch build
 
-      # - name: Publish to PyPI
-      #   if: github.ref == 'refs/heads/main' && matrix.python-version == '3.11' # Only publish from one Python version
-      #   run: hatch publish -u ${{ secrets.PYPI_USERNAME }} -p ${{ secrets.PYPI_TOKEN }}
+      - name: Publish to PyPI
+        if: github.ref == 'refs/heads/master'
+        run: hatch publish -u ${{ secrets.PYPI_USERNAME }} -p ${{ secrets.PYPI_TOKEN }}
