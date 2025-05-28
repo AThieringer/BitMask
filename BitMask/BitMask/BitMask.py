@@ -90,8 +90,6 @@ class BitMask:
 
         if pos >= self.__max_length:
             raise IndexError(f"Index {pos} is out of range")
-        elif pos < 0:
-            raise ValueError(f"Index {pos} must be positive")
 
         self.__value |= 1 << pos
 
@@ -112,8 +110,6 @@ class BitMask:
 
         if pos >= self.__max_length:
             raise IndexError(f"Index {pos} is out of range")
-        elif pos < 0:
-            raise ValueError(f"Index {pos} must be positive")
 
         self.__value ^= 1 << pos
 
@@ -134,8 +130,6 @@ class BitMask:
 
         if pos >= self.__max_length:
             raise IndexError(f"Index {pos} is out of range")
-        elif pos < 0:
-            raise ValueError(f"Index {pos} must be positive")
 
         self.__value &= ~(1 << pos)
 
@@ -181,8 +175,6 @@ class BitMask:
 
         if pos >= self.__max_length:
             raise IndexError(f"Index {pos} is out of range")
-        elif pos < 0:
-            raise ValueError(f"Index {pos} must be positive")
 
         return (self.__value >> pos) & 1
 
@@ -298,11 +290,13 @@ class BitMask:
 
     def to_binary(self) -> str:
         """Return a binary string representation of the BitMask."""
-        return bin(self.__value)
+        binary_string = bin(self.__value)
+        return binary_string[:2] + binary_string[2:].zfill(self.__max_length)
 
     def to_hexadecimal(self) -> str:
         """Return a hexadecimal string representation of the BitMask."""
-        return hex(self.__value)
+        hexadecimal_string = hex(self.__value)
+        return hexadecimal_string[:2] + hexadecimal_string[2:].zfill((self.__max_length + 3) >> 2)
 
     def to_decimal(self) -> int:
         """Return the decimal value of the BitMask."""
@@ -320,10 +314,15 @@ class BitMask:
             new_length = abs(start - stop)
 
             # Create the value for the new BitMask one bit at a time
-            for i, pos in enumerate(range(start, stop, step)):
-                new_value |= ((self.__value >> pos) & 1) << i
+            if step > 0:
+                for i, pos in enumerate(range(start, stop, step)):
+                    new_value |= ((self.__value >> pos) & 1) << i
+            else:
+                for i, pos in enumerate(range(start, stop, step)):
+                    new_value |= ((self.__value >> pos) & 1) << (new_length - 1 - i)
 
             return BitMask(new_length, new_value)
+
         # For an index, return the value of the bit at the index
         elif isinstance(item, int):
             if item < 0:
@@ -439,9 +438,8 @@ class BitMask:
             yield (self.__value >> current) & 1
             current += 1
 
-    def __invert__(self) -> BitMask:
-        self.flip_all()
-        return self
+    def __invert__(self) -> int:
+        return self.__value ^ (1 << self.__max_length) - 1
 
     def __hash__(self) -> None:
         return None
