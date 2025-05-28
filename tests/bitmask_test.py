@@ -1,5 +1,5 @@
 import pytest
-from BitMask import BitMask
+from src.BitMask import BitMask
 
 
 class TestBitMask:
