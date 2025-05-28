@@ -90,6 +90,8 @@ class BitMask:
 
         if pos >= self.__max_length:
             raise IndexError(f"Index {pos} is out of range")
+        elif pos < 0:
+            raise ValueError(f"Index {pos} must be positive")
 
         self.__value |= 1 << pos
 
@@ -110,6 +112,8 @@ class BitMask:
 
         if pos >= self.__max_length:
             raise IndexError(f"Index {pos} is out of range")
+        elif pos < 0:
+            raise ValueError(f"Index {pos} must be positive")
 
         self.__value ^= 1 << pos
 
@@ -130,6 +134,8 @@ class BitMask:
 
         if pos >= self.__max_length:
             raise IndexError(f"Index {pos} is out of range")
+        elif pos < 0:
+            raise ValueError(f"Index {pos} must be positive")
 
         self.__value &= ~(1 << pos)
 
@@ -175,6 +181,8 @@ class BitMask:
 
         if pos >= self.__max_length:
             raise IndexError(f"Index {pos} is out of range")
+        elif pos < 0:
+            raise ValueError(f"Index {pos} must be positive")
 
         return (self.__value >> pos) & 1
 
@@ -313,7 +321,7 @@ class BitMask:
 
             # Create the value for the new BitMask one bit at a time
             for i, pos in enumerate(range(start, stop, step)):
-                new_value |= ((self.__value >> pos) & 1) << (new_length - i - 1)
+                new_value |= ((self.__value >> pos) & 1) << i
 
             return BitMask(new_length, new_value)
         # For an index, return the value of the bit at the index

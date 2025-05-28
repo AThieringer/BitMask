@@ -1,5 +1,5 @@
 import pytest
-from BitMask.BitMask import BitMask
+from BitMask.BitMask.BitMask import BitMask
 
 
 class TestBitMask:
@@ -58,8 +58,8 @@ class TestBitMask:
             bm.set_bit("2")
         with pytest.raises(IndexError):
             bm.set_bit(4)
-        with pytest.raises(IndexError):
-            bm.set_bit(-1) # Negative index should raise IndexError
+        with pytest.raises(ValueError):
+            bm.set_bit(-1)
 
     def test_set_all(self):
         bm = BitMask(5)
@@ -79,8 +79,8 @@ class TestBitMask:
             bm.flip_bit(1.5)
         with pytest.raises(IndexError):
             bm.flip_bit(3)
-        with pytest.raises(IndexError):
-            bm.flip_bit(-2) # Negative index should raise IndexError
+        with pytest.raises(ValueError):
+            bm.flip_bit(-2)
 
     def test_flip_all(self):
         bm = BitMask(4, 5) # 0101
@@ -91,8 +91,8 @@ class TestBitMask:
         bm = BitMask(7, 55) # 0110111
         bm.reset_bit(0)
         assert bm.value == 54 # 0110110
-        bm.reset_bit(3)
-        assert bm.value == 46 # 0101110
+        bm.reset_bit(4)
+        assert bm.value == 38 # 0100110
 
     def test_reset_bit_errors(self):
         bm = BitMask(2)
@@ -100,8 +100,8 @@ class TestBitMask:
             bm.reset_bit([0])
         with pytest.raises(IndexError):
             bm.reset_bit(2)
-        with pytest.raises(IndexError):
-            bm.reset_bit(-3) # Negative index should raise IndexError
+        with pytest.raises(ValueError):
+            bm.reset_bit(-3)
 
     def test_reset_all(self):
         bm = BitMask(6, 63) # 111111
@@ -115,7 +115,7 @@ class TestBitMask:
 
         bm2 = BitMask(7, 21) # 0010101
         bm2.reverse_bit_order()
-        assert bm2.value == 42 # 1010100
+        assert bm2.value == 84 # 1010100
 
     def test_get_bit(self):
         bm = BitMask(5, 13) # 01101
@@ -131,8 +131,8 @@ class TestBitMask:
             bm.get_bit({0})
         with pytest.raises(IndexError):
             bm.get_bit(3)
-        with pytest.raises(IndexError):
-            bm.get_bit(-1) # Negative index should raise IndexError
+        with pytest.raises(ValueError):
+            bm.get_bit(-1)
 
     def test_get_count(self):
         bm = BitMask(8, 170) # 10101010
@@ -229,9 +229,9 @@ class TestBitMask:
 
     def test_str(self):
         bm = BitMask(4, 5) # 0101
-        assert str(bm) == "1 0 1 0"
-        bm2 = BitMask(7, 42) # 0101010
-        assert str(bm2) == "0 1 0 1 0 1 0"
+        assert str(bm) == "0 1 0 1"
+        bm2 = BitMask(7, 41) # 0101001
+        assert str(bm2) == "0 1 0 1 0 0 1"
 
     def test_getitem_index(self):
         bm = BitMask(5, 13) # 01101
@@ -252,10 +252,10 @@ class TestBitMask:
 
     def test_getitem_slice(self):
         bm = BitMask(8, 170) # 10101010
-        assert bm[0:3].value == 5 # 0101 -> 101 (reversed due to storage)
-        assert bm[2:6].value == 10 # 0101 -> 0101 -> 1010 (reversed)
+        assert bm[0:3].value == 2 # 010
+        assert bm[2:6].value == 10 # 1010
         assert bm[:4].value == 10 # 0101 -> 0101 -> 1010
-        assert bm[4:].value == 5 # 1010 -> 0101
+        assert bm[4:].value == 10 # 1010
         assert bm[::-1].value == 85 # 01010101
 
     def test_setitem_index(self):
@@ -267,7 +267,7 @@ class TestBitMask:
         bm[0] = 0
         assert bm.value == 8
         bm[-1] = 1
-        assert bm.value == 24 # 011000
+        assert bm.value == 40
 
     def test_setitem_index_errors(self):
         bm = BitMask(3)
@@ -293,10 +293,9 @@ class TestBitMask:
         bm4 = BitMask(6, 7)
         assert bm1 == bm2
         assert bm1 != bm3
-        assert bm1 != 7
-        assert bm1 == 7 # Comparing with int value
-        assert bm1 != bm4
-        assert bm1 != "7"
+        assert bm3 != 7
+        assert bm1 == 7
+        assert bm1.__ne__(bm4) is NotImplemented
         assert bm1.__eq__("7") is NotImplemented
 
     def test_inequality(self):
@@ -326,4 +325,5 @@ class TestBitMask:
 
     def test_hash(self):
         bm = BitMask(3, 5)
-        assert hash(bm) is None # __hash__ returns None
+        with pytest.raises(TypeError):
+            assert hash(bm) is None
