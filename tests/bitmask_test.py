@@ -1,8 +1,6 @@
 import pytest
 from BitMask import BitMask
 
-import pytest
-from your_package import BitMask  # Assuming your BitMask class is in 'your_package' directory
 
 class TestBitMask:
     def test_initialization(self):
