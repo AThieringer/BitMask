@@ -14,8 +14,7 @@ description = "A package for creating and manipulating BitMasks"
 readme = "README.md"
 keywords = ["BitMask", "bit", "data", "binary"]
 classifiers = [
-    "Development Status :: 5 - Production/Stable",
-    "Private :: Do Not Upload"
+    "Development Status :: 5 - Production/Stable"
 ]
 license = "MIT"
 license-files = ["LICENSE.txt"]
