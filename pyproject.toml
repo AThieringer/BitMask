@@ -9,7 +9,7 @@ packages = ["src/BitMask"]
 name = "BitMaskFunctionalties"
 version = "1.2.0"
 dependencies = []
-requires-python = ">= 3.8"
+requires-python = ">= 3.11"
 authors = [
     { name = "Adam Thieringer", email = "adamt0408@gmail.com" }
 ]
