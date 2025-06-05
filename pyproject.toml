@@ -6,7 +6,7 @@ build-backend = "hatchling.build"
 packages = ["src/BitMask"]
 
 [project]
-name = "BitMaskFunctionalties"
+name = "BitMaskFunctionalities"
 version = "1.2.0"
 dependencies = []
 requires-python = ">= 3.11"
