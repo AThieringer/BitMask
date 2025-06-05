@@ -2,13 +2,13 @@ import pytest
 
 # Import the BitMask class and helper functions from your module
 from BitMask import BitMask
-from bitmask_module import (_MAX_BITMASK_LENGTH,
-                            _value_validation,
-                            _index_validation,
-                            _sliceable_index_validation,
-                            _string_value_validation,
-                            _bit_mask_length_validation,
-                            _shift_validation)
+from BitMask.bitmask_module import (_MAX_BITMASK_LENGTH,
+                                    _value_validation,
+                                    _index_validation,
+                                    _sliceable_index_validation,
+                                    _string_value_validation,
+                                    _bit_mask_length_validation,
+                                    _shift_validation)
 
 
 # noinspection PyTypeChecker
