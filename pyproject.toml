@@ -7,11 +7,11 @@ packages = ["src/BitMask"]
 
 [project]
 name = "BitMaskFunctionalties"
-version = "1.1.0"
+version = "1.2.0"
 dependencies = []
 requires-python = ">= 3.8"
 authors = [
-    {name = "Adam Thieringer", email = "adamt0408@gmail.com"}
+    { name = "Adam Thieringer", email = "adamt0408@gmail.com" }
 ]
 description = "A package for creating and manipulating BitMasks"
 readme = "README.md"
