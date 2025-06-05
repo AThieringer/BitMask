@@ -2,13 +2,13 @@ import pytest
 
 # Import the BitMask class and helper functions from your module
 from BitMask import BitMask
-from BitMask import (_MAX_BITMASK_LENGTH,
-                     _value_validation,
-                     _index_validation,
-                     _sliceable_index_validation,
-                     _string_value_validation,
-                     _bit_mask_length_validation,
-                     _shift_validation)
+from bitmask_module import (_MAX_BITMASK_LENGTH,
+                            _value_validation,
+                            _index_validation,
+                            _sliceable_index_validation,
+                            _string_value_validation,
+                            _bit_mask_length_validation,
+                            _shift_validation)
 
 
 # noinspection PyTypeChecker
@@ -342,7 +342,7 @@ class TestBitMask:
     def test_reverse_bits_deprecated(self):
         bm = BitMask(8, 0b01010101)
         with pytest.warns(DeprecationWarning,
-                          match="reverse_bits\(\) is deprecated"):
+                          match=r"reverse_bits\(\) is deprecated"):
             bm.reverse_bits()
         print(bm.to_binary())
         assert bm.value == 0b10101010  # Check functionality
