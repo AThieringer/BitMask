@@ -2,8 +2,8 @@
 fixed-length binary data."""
 
 # Author: Adam Thieringer
-# Date: 2025-05-27
-# Version: 1.1.0
+# Date: 2025-06-08
+# Version: 1.2.0
 # Bit hacks can be found at
 # https://graphics.stanford.edu/~seander/bithacks.html
 
@@ -232,6 +232,20 @@ class BitMask:
         Initialize a BitMask object with a specified length and an optional
         initial integer value.
 
+        Examples:
+
+        >>> bm = BitMask(8, 15)
+
+        >>> bm
+
+        0 0 0 0 1 1 1 1
+
+        >>> bm = BitMask(4, 5)
+
+        >>> bm
+
+        0 1 0 1
+
         :param length: The maximum number of bits the BitMask can hold.
         :param value: optional
             An integer value to initialize the BitMask (defaults to 0).
@@ -423,9 +437,13 @@ class BitMask:
         Sets all bits in the BitMask to `0`.
 
         Examples:
+
         >>> bm = BitMask(4, 15)  # 1 1 1 1
+
         >>> bm.clear_all()
+
         >>> bm
+
         0 0 0 0
         """
         self._value = 0
@@ -444,24 +462,6 @@ class BitMask:
 
         0 0 0 1 0 1 0 1
         """
-        reversed_bits = 0
-        for i in range(self._max_length):
-            reversed_bits <<= 1
-            reversed_bits |= ((self._value >> i) & 1)
-
-        self._value = reversed_bits
-
-    def reverse_bits(self) -> None:
-        """
-        Deprecated since version 1.1.0: Use `reverse_bit_order()` instead.
-
-        This function will be removed in version 1.3.0
-        """
-        warnings.warn(
-            "reverse_bits() is deprecated and will be removed in"
-            "version 1.3.0. Use reverse_bit_order() instead",
-            DeprecationWarning, stacklevel=2)
-
         reversed_bits = 0
         for i in range(self._max_length):
             reversed_bits <<= 1
@@ -660,7 +660,7 @@ class BitMask:
 
         >>> bm
 
-        0 1 1 0 0
+        0 1 1 0 1
 
         :param new_value: A hexadecimal string representation of the value.
         :raises TypeError: If `new_value` is not a string.
@@ -683,7 +683,7 @@ class BitMask:
 
         Examples:
 
-        >>> bm = BitMask(5)  # 0 0 0 0
+        >>> bm = BitMask(4)  # 0 0 0 0
 
         >>> bm.set_decimal("6")
 
@@ -716,8 +716,7 @@ class BitMask:
     # --- self.value String Formats ---
     def to_binary(self) -> str:
         """Returns a binary string representation of `self.value`."""
-        binary_string = bin(self._value)
-        return binary_string[:2] + binary_string[2:].zfill(self._max_length)
+        return "0b" + bin(self._value)[2:].zfill(self._max_length)
 
     def to_hexadecimal(self) -> str:
         """Returns a hexadecimal string representation of `self.value`."""
@@ -736,9 +735,9 @@ class BitMask:
 
     def __str__(self) -> str:
         """Returns a space-separated string of bits, from MSB to LSB"""
-        return ' '.join([str(bit) for bit in self])[::-1]
+        return ' '.join(bin(self._value)[2:].zfill(self._max_length))
 
-    # --- Container / Collection Emulation ---
+    # --- Iterator Methods ---
     def __len__(self) -> int:
         """Returns `self.max_length`"""
         return self._max_length
@@ -763,13 +762,13 @@ class BitMask:
 
         0
 
-        >>> repr(bm[2:6])  # 0 0 1 1
+        >>> bm[2:6]
 
-        BitMask(4, 3)
+        0 0 1 1
 
-        >>> repr(bm[::-2])  # 0 1 0 1
+        >>> bm[::-2]
 
-        BitMask(4, 5)
+        0 1 0 1
 
         :param item: An integer index or a slice object.
         :return: An integer (0 or 1) if `item` is an index, or a new `BitMask`
@@ -886,6 +885,14 @@ class BitMask:
         Yields each bit value from the Least Significant Bit (LSB) to Most
         Significant Bit (MSB).
 
+        Examples:
+
+        >>> bm = BitMask(6, 26)  # 0 1 1 0 1 0
+
+        >>> list(bm)
+
+        [0, 1, 0, 1, 1, 0]
+
         :return: A generator object that yields integer bit values
             (`0` or `1`).
         """
@@ -893,6 +900,25 @@ class BitMask:
         while current < self._max_length:
             yield (self._value >> current) & 1
             current += 1
+
+    def __reversed__(self) -> Generator[int]:
+        """
+        Yields each bit value from the Most Significant Bit (MSB) to Least
+        Significant Bit (LSB).
+
+        Examples:
+
+        >>> bm = BitMask(6, 26)  # 0 1 1 0 1 0
+
+        >>> list(reversed(bm))
+
+        [0, 1, 1, 0, 1, 0]
+        """
+
+        current = self._max_length - 1
+        while current >= 0:
+            yield (self._value >> current) & 1
+            current -= 1
 
     # --- Comparisons ---
     def __eq__(self, other: object) -> bool:
@@ -903,6 +929,22 @@ class BitMask:
         `other`. When `other` is a `BitMask` object, returns `True` if both
         `self.value` is equal to `other.value` and `self.max_length` is equal
         to `other.max_length`.
+
+        Examples:
+
+        >>> bm = BitMask(8, 255)  # 1 1 1 1 1 1 1 1
+
+        >>> bm == 255
+
+        True
+
+        >>> bm == BitMask(12, 255)  # 0 0 0 0 1 1 1 1 1 1 1 1
+
+        False
+
+        >>> bm == BitMask(8, 15)  # 0 0 0 0 1 1 1 1
+
+        False
 
         :param other: The object to compare against. Can be an integer or
             `BitMask` object.
@@ -942,8 +984,20 @@ class BitMask:
         (less than) with another object.
 
         When `other` is an integer, returns `True` if `self.value` is less than
-        `other`. When `other` is a `BitMask` object, returns `True` if
-        `self.value` is less than `other.value`.
+        `other`. When `other` is a `BitMask` object with the same `max_length`,
+        returns `True` if `self.value` is less than `other.value`.
+
+        Examples:
+
+        >>> bm = BitMask(4, 5)  # 0 1 0 1
+
+        >>> bm < 5
+
+        False
+
+        >>> bm < BitMask(4, 7)  # 0 1 1 1
+
+        True
 
         :param other: An integer or `BitMask` to be compared.
         :return: `True` if the requirements for strict inequality are
@@ -969,8 +1023,21 @@ class BitMask:
         (less than or equal to) with another object.
 
         When `other` is an integer, returns `True` if `self.value` is less than
-        or equal to `other`. When `other` is a `BitMask` object, returns `True`
-        if `self.value` is less than or equal to `other.value`.
+        or equal to `other`. When `other` is a `BitMask` object with the same
+        `max_length`, returns `True` if `self.value` is less than or equal to
+        `other.value`.
+
+        Examples:
+
+        >>> bm = BitMask(4, 5)  # 0 1 0 1
+
+        >>> bm <= 5
+
+        True
+
+        >>> bm <= BitMask(4, 3)  # 0 0 1 1
+
+        False
 
         :param other: An integer or `BitMask` to be compared.
         :return: `True` if the requirements for strict inequality are
@@ -996,8 +1063,21 @@ class BitMask:
         (greater than) with another object.
 
         When `other` is an integer, returns `True` if `self.value` is greater
-        than `other`. When `other` is a `BitMask` object, returns `True` if
-        `self.value` is greater than `other.value`.
+        than `other`. When `other` is a `BitMask` object with the same
+        `max_length`, returns `True` if `self.value` is greater than
+        `other.value`.
+
+        Examples:
+
+        >>> bm = BitMask(4, 5)  # 0 1 0 1
+
+        >>> bm > 2
+
+        True
+
+        >>> bm > BitMask(4, 7)  # 0 1 1 1
+
+        False
 
         :param other: An integer or `BitMask` to be compared.
         :return: `True` if the requirements for strict inequality are
@@ -1023,8 +1103,21 @@ class BitMask:
         (greater than or equal to) with another object.
 
         When `other` is an integer, returns `True` if `self.value` is greater
-        than or equal to `other`. When `other` is a `BitMask` object, returns
-        `True` if `self.value` is greater than or equal to `other.value`.
+        than or equal to `other`. When `other` is a `BitMask` object with the
+        same `max_length`, returns `True` if `self.value` is greater than or
+        equal to `other.value`.
+
+        Examples:
+
+        >>> bm = BitMask(4, 5)  # 0 1 0 1
+
+        >>> bm >= 5
+
+        True
+
+        >>> bm >= BitMask(4, 4)  # 0 1 0 0
+
+        False
 
         :param other: An integer or `BitMask` to be compared.
         :return: `True` if the requirements for strict inequality are
@@ -1045,20 +1138,20 @@ class BitMask:
             return NotImplemented
 
     # --- Unary Operations ---
-    def __reversed__(self) -> BitMask:
-        """Returns a `BitMask` object with length, `self.max_length`, with bit
-        order reversed."""
-        reversed_value = 0
-        for i in range(self._max_length):
-            reversed_value <<= 1
-            reversed_value |= ((self._value << i) & 1)
-
-        return BitMask(self._max_length, reversed_value,
-                       enable_validation=self._validation_enabled)
-
     def __invert__(self) -> BitMask:
-        """Returns a `BitMask` object with max length, `self.max_length`, where
-        all bits are flipped."""
+        """
+        Returns a `BitMask` object with max length, `self.max_length`, where
+        all bits are flipped.
+
+        Examples:
+
+        >>> bm = BitMask(8, 105)  # 0 1 1 0 1 0 0 1
+
+        >>> ~bm
+
+        1 0 0 1 0 1 1 0
+
+        """
         return BitMask(self._max_length,
                        self._value ^ (self._upper_bound - 1),
                        enable_validation=self._validation_enabled)
