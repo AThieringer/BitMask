@@ -7,7 +7,7 @@ packages = ["src/BitMask"]
 
 [project]
 name = "BitMaskFunctionalities"
-version = "1.2.0"
+version = "1.2.1"
 dependencies = []
 requires-python = ">= 3.11"
 authors = [
@@ -15,7 +15,7 @@ authors = [
 ]
 description = "A package for creating and manipulating BitMasks"
 readme = "README.md"
-keywords = ["BitMask", "bit", "data", "binary"]
+keywords = ["BitMask", "bitset", "flags", "bit", "data", "binary"]
 classifiers = [
     "Development Status :: 5 - Production/Stable"
 ]
