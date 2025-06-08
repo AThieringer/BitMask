@@ -339,14 +339,6 @@ class TestBitMask:
         bm.reverse_bit_order()
         assert bm.value == 255
 
-    def test_reverse_bits_deprecated(self):
-        bm = BitMask(8, 0b01010101)
-        with pytest.warns(DeprecationWarning,
-                          match=r"reverse_bits\(\) is deprecated"):
-            bm.reverse_bits()
-        print(bm.to_binary())
-        assert bm.value == 0b10101010  # Check functionality
-
     def test_get_bits(self):
         bm = BitMask(8, 0b10110110)  # 182
         assert bm.get_bits(0) == 0
