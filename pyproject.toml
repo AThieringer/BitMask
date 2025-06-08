@@ -7,7 +7,7 @@ packages = ["src/BitMask"]
 
 [project]
 name = "BitMaskFunctionalities"
-version = "1.2.1"
+version = "1.2.2"
 dependencies = []
 requires-python = ">= 3.11"
 authors = [
@@ -25,4 +25,4 @@ license-files = ["LICENSE.txt"]
 [project.urls]
 Repository = "https://github.com/AThieringer/BitMask"
 Download = "https://github.com/AThieringer/BitMask/releases"
-Changelog = "https://github.com/AThieringer/BitMask/blob/master/Changelog.txt"
+Changelog = "https://github.com/AThieringer/BitMask/blob/master/Changelog"
