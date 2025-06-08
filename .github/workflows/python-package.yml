@@ -62,7 +62,7 @@ jobs:
     if: github.ref == 'refs/heads/master'
     environment:
       name: pypi
-      url: https://pypi.org/p/BitMaskFunctionalities
+      url: https://pypi.org/project/BitMaskFunctionalities/
     permissions:
       id-token: write
 
